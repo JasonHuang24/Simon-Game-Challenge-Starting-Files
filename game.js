@@ -4,24 +4,31 @@ var userClickedPattern = [];
 var level = 0;
 var started = false;
 
-$(document).keydown(function() {
+// Thanks to this link https://dev.to/rfornal/-replacing-jquery-with-vanilla-javascript-1k2g#working-with-events
+
+document.addEventListener("keydown", () => {
   if(!started) {
-    $("#level-title").text("Level " + level);
+    document.querySelector("#level-title").textContent = "Level " + level;
     nextSequence();
     started = true;
   }
 })
 
-$(".btn").click(function() {
-  var userChosenColor = $(this).attr("id");
-  userClickedPattern.push(userChosenColor);
+//This one was tricky
+document.querySelectorAll(".btn").forEach((bt) => {
+  bt.onclick = () => {
 
-  playSound(userChosenColor)
-  animatePress(userChosenColor)
-  checkAnswer(userClickedPattern.length - 1)
+    let userChosenColor = bt.id;
+    userClickedPattern.push(userChosenColor);
 
-  console.log(userClickedPattern)
-})
+    playSound(userChosenColor);
+    animatePress(userChosenColor);
+    checkAnswer(userClickedPattern.length - 1);
+
+    console.log(userClickedPattern)
+  };
+});
+
 
 function playSound(name) {
   var audio = new Audio("sounds/" + name + ".mp3");
@@ -29,9 +36,9 @@ function playSound(name) {
 }
 
 function animatePress(currentColor) {
-  $("#" + currentColor).addClass("pressed");
+  document.querySelector("#" + currentColor).classList.add("pressed");
   setTimeout(function() {
-    $("#" + currentColor).removeClass("pressed");
+    document.querySelector("#" + currentColor).classList.remove("pressed");
   }, 100)
 }
 
@@ -50,12 +57,12 @@ function checkAnswer(currentLevel) {
 
     playSound("wrong");
 
-    $("body").addClass("game-over");
+    document.querySelector("body").classList.add("game-over");
     setTimeout(function() {
-      $("body").removeClass("game-over");
+      document.querySelector("body").classList.remove("game-over");
     }, 200)
 
-    $("#level-title").text("Game Over, Press Any Key to Restart");
+    document.querySelector("#level-title").textContent = "Game Over, Press Any Key to Restart";
 
     startOver();
     console.log("wrong");
@@ -67,13 +74,17 @@ function nextSequence() {
   userClickedPattern = [];
 
   level++;
-  $("#level-title").text("Level " + level);
+  document.querySelector("#level-title").textContent = "Level " + level;
 
   var randomNumber = Math.floor(Math.random() * 4);
   var randomChosenColor = buttonColors[randomNumber];
   gamePattern.push(randomChosenColor);
 
-  $("#" + randomChosenColor).fadeIn(100).fadeOut(100).fadeIn(100);
+  //Second tricky part.
+  document.querySelector("#" + randomChosenColor).classList.add("pressed");
+  setTimeout(() => {
+    document.querySelector("#" + randomChosenColor).classList.remove("pressed");
+  }, 100)
 
   playSound(randomChosenColor)
 }
