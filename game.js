@@ -81,9 +81,9 @@ function nextSequence() {
   gamePattern.push(randomChosenColor);
 
   //Second tricky part.
-  document.querySelector("#" + randomChosenColor).classList.add("pressed");
+  document.querySelector("#" + randomChosenColor).classList.add("hidden");
   setTimeout(() => {
-    document.querySelector("#" + randomChosenColor).classList.remove("pressed");
+    document.querySelector("#" + randomChosenColor).classList.remove("hidden");
   }, 100)
 
   playSound(randomChosenColor)
